@@ -222,8 +222,8 @@ export async function POST(request: NextRequest) {
     const resend = new Resend(process.env.RESEND_API_KEY)
 
     // Use default values from environment variables
-    const fromEmail = `Whatamatters Leads <${process.env.RESEND_FROM_EMAIL || "leads@whatamatters.com"}>`
-    const toEmail = process.env.ADMIN_EMAIL || "admin@whatamatters.com"
+    const fromEmail = `Whatamatters Leads <${process.env.RESEND_FROM_EMAIL || "notifications@send.whatamatters.com"}>`
+    const toEmail = process.env.ADMIN_EMAIL || "leads@whatamatters.com"
 
     // Send email via Resend
     const { data, error } = await resend.emails.send({
