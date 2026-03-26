@@ -1,1 +1,1364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Revenue Leak Score™ — WhatAMatters</title>
+<meta name="description" content="Revenue Leak Score™ — WhatAMatters · Montgomery County, MD">
 
+<!-- Preconnect so fonts load as fast as possible when online -->
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<!-- Load fonts async — non-blocking. If offline, fallback stack kicks in immediately -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=Barlow:wght@400;500;600&display=swap" media="print" onload="this.media='all'">
+<noscript>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=Barlow:wght@400;500;600&display=swap">
+</noscript>
+
+<style>
+/* ============================================================
+   FONT STACKS
+   Barlow Condensed fallback: Impact, Arial Narrow, Franklin Gothic
+   Barlow fallback: system-ui, Helvetica Neue, Arial
+   Both stacks preserve the brutalist condensed character
+   ============================================================ */
+
+:root {
+  --f-condensed: 'Barlow Condensed', Impact, 'Arial Narrow', 'Franklin Gothic Medium', Arial, sans-serif;
+  --f-body: 'Barlow', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
+
+  --black: #0A0A0A;
+  --red: #BF0D3E;
+  --white: #F2F0EB;
+  --yellow: #F5C400;
+  --gray: #141414;
+  --rule: rgba(242,240,235,0.1);
+  --rule-light: rgba(242,240,235,0.06);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ============================================================
+   LOADING SCREEN — shown while JS detects device/lang
+   ============================================================ */
+body {
+  background: var(--black);
+  color: var(--white);
+  font-family: var(--f-body);
+  margin: 0;
+}
+
+#loader {
+  position: fixed;
+  inset: 0;
+  background: var(--black);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  z-index: 9999;
+}
+
+.loader-brand {
+  font-family: var(--f-condensed);
+  font-size: 18px;
+  font-weight: 900;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--white);
+}
+
+.loader-dot {
+  width: 6px;
+  height: 6px;
+  background: var(--red);
+  animation: pulse 1s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.3; transform: scale(0.6); }
+}
+
+.loader-label {
+  font-family: var(--f-condensed);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: rgba(242,240,235,0.3);
+}
+
+/* ============================================================
+   FALLBACK UI — shown if JS fails completely
+   ============================================================ */
+#fallback {
+  display: none;
+  min-height: 100vh;
+  padding: 32px 24px;
+  background: var(--black);
+}
+
+.fb-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--rule);
+  margin-bottom: 32px;
+}
+
+.fb-brand {
+  font-family: var(--f-condensed);
+  font-size: 15px;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--white);
+}
+
+.fb-badge {
+  font-family: var(--f-condensed);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  background: var(--red);
+  color: var(--white);
+  padding: 4px 10px;
+}
+
+.fb-title {
+  font-family: var(--f-condensed);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--yellow);
+  margin-bottom: 16px;
+}
+
+.fb-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  max-width: 480px;
+}
+
+@media (max-width: 480px) {
+  .fb-grid { grid-template-columns: 1fr; }
+}
+
+.fb-card {
+  display: block;
+  padding: 20px;
+  background: var(--gray);
+  border: 1px solid var(--rule);
+  text-decoration: none;
+  border-left: 3px solid var(--red);
+  transition: border-color 0.15s;
+}
+
+.fb-card:hover { border-left-color: var(--yellow); }
+
+.fb-card-label {
+  font-family: var(--f-condensed);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(242,240,235,0.35);
+  margin-bottom: 8px;
+  display: block;
+}
+
+.fb-card-name {
+  font-family: var(--f-condensed);
+  font-size: 18px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--white);
+  line-height: 1.1;
+}
+
+.fb-card-sub {
+  font-size: 12px;
+  color: rgba(242,240,235,0.4);
+  margin-top: 4px;
+}
+
+/* ============================================================
+   BROCHURE CONTAINER
+   ============================================================ */
+#brochure {
+  display: none;
+}
+
+/* ============================================================
+   ========== SHARED BROCHURE STYLES ==========
+   ============================================================ */
+.bro {
+  max-width: 100%;
+  color: var(--white);
+  font-family: var(--f-body);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.bro-desktop {
+  max-width: 1000px;
+  margin: 32px auto;
+  border: 1px solid rgba(242,240,235,0.08);
+}
+
+/* HEADER */
+.b-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--rule);
+}
+
+.b-header-brand {
+  padding: 14px 32px;
+  border-right: 1px solid var(--rule);
+  font-family: var(--f-condensed);
+  font-size: 15px;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--white);
+  flex: 1;
+}
+
+.b-header-product {
+  padding: 14px 24px;
+  border-right: 1px solid var(--rule);
+  font-family: var(--f-condensed);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--yellow);
+}
+
+.b-header-badge {
+  padding: 14px 20px;
+  font-family: var(--f-condensed);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  background: var(--red);
+  color: var(--white);
+}
+
+/* HERO */
+.b-hero {
+  border-bottom: 1px solid var(--rule);
+}
+
+.b-hero-inner {
+  padding: 28px 20px 24px;
+}
+
+.b-hero-inner.desktop {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding: 0;
+}
+
+.b-hero-left {
+  padding: 48px 40px 44px;
+  border-right: 1px solid var(--rule);
+}
+
+.b-hero-right {
+  padding: 48px 40px 44px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.b-eyebrow-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.b-eyebrow-line {
+  width: 24px;
+  height: 2px;
+  background: var(--yellow);
+  flex-shrink: 0;
+}
+
+.b-eyebrow-line.grow { flex: 1; opacity: 0.4; }
+
+.b-eyebrow-text {
+  font-family: var(--f-condensed);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--yellow);
+}
+
+.b-h1 {
+  font-family: var(--f-condensed);
+  font-weight: 900;
+  line-height: 0.92;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  color: var(--white);
+  font-size: 72px;
+}
+
+.b-h1.desktop { font-size: 88px; line-height: 0.9; }
+.b-h1 .red { color: var(--red); }
+.b-h1 .yellow { color: var(--yellow); }
+
+.b-sub-line {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.b-rule-short { width: 24px; height: 2px; background: var(--red); flex-shrink: 0; }
+
+.b-sub-text {
+  font-family: var(--f-condensed);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(242,240,235,0.5);
+}
+
+.b-hero-desc {
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px solid var(--rule);
+  font-size: 13px;
+  line-height: 1.6;
+  color: rgba(242,240,235,0.65);
+}
+
+.b-hero-desc.desktop {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
+  margin-bottom: 32px;
+}
+
+.b-hero-desc strong { color: var(--white); font-weight: 600; }
+
+.b-hero-sub-label {
+  font-family: var(--f-condensed);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(242,240,235,0.3);
+  margin-bottom: 16px;
+}
+
+.b-hero-tagline {
+  padding-top: 20px;
+  border-top: 1px solid var(--rule);
+  font-family: var(--f-condensed);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(242,240,235,0.3);
+}
+
+/* TRIPLE */
+.b-triple { border-bottom: 1px solid var(--rule); }
+.b-triple.desktop { display: grid; grid-template-columns: 1fr 1fr 1fr; }
+
+.b-triple-item {
+  padding: 20px 20px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.b-triple-item:last-child { border-bottom: none; }
+.b-triple-item:first-child.mobile { padding-top: 20px; }
+
+.b-triple-item.desktop {
+  padding: 28px 32px;
+  border-bottom: none;
+  border-right: 1px solid var(--rule);
+}
+
+.b-triple-item.desktop:last-child { border-right: none; }
+
+.b-triple-num {
+  font-family: var(--f-condensed);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: var(--red);
+  margin-bottom: 8px;
+  display: block;
+}
+
+.b-triple-q {
+  font-family: var(--f-condensed);
+  font-size: 19px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--yellow);
+  margin-bottom: 6px;
+  line-height: 1.1;
+}
+
+.b-triple-q.desktop { font-size: 20px; }
+
+.b-triple-a {
+  font-size: 13px;
+  color: rgba(242,240,235,0.7);
+  line-height: 1.55;
+}
+
+/* BANDA */
+.b-banda {
+  background: var(--red);
+  padding: 18px 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.b-banda.desktop { padding: 20px 40px; gap: 24px; }
+
+.b-banda-dollar {
+  font-family: var(--f-condensed);
+  font-size: 60px;
+  font-weight: 900;
+  color: var(--white);
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.b-banda-dollar.desktop { font-size: 64px; }
+
+.b-banda-vr {
+  width: 1px;
+  height: 50px;
+  background: rgba(255,255,255,0.3);
+  flex-shrink: 0;
+}
+
+.b-banda-text {
+  font-family: var(--f-condensed);
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: rgba(255,255,255,0.9);
+  line-height: 1.35;
+}
+
+.b-banda-text.desktop { font-size: 15px; letter-spacing: 0.16em; }
+
+.b-banda-note {
+  margin-left: auto;
+  font-family: var(--f-condensed);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.5);
+  text-align: right;
+  line-height: 1.5;
+  max-width: 200px;
+}
+
+/* TABLE */
+.b-table-block { border-bottom: 1px solid var(--rule); }
+
+.b-table-note {
+  padding: 12px 20px;
+  font-size: 11px;
+  color: rgba(242,240,235,0.4);
+  line-height: 1.5;
+  border-bottom: 1px solid var(--rule);
+  font-style: italic;
+}
+
+.b-table-note.desktop { padding: 10px 40px; background: rgba(245,196,0,0.04); border-bottom: 1px solid rgba(245,196,0,0.1); }
+
+/* Desktop table head */
+.b-table-head {
+  display: grid;
+  grid-template-columns: 2.5fr 1.2fr 1.4fr 1.6fr;
+  padding: 10px 40px;
+  border-bottom: 1px solid var(--rule);
+  background: var(--gray);
+}
+
+.b-th {
+  font-family: var(--f-condensed);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(242,240,235,0.3);
+}
+
+/* Mobile leak cards */
+.b-leak-card {
+  border-bottom: 1px solid var(--rule);
+}
+
+.b-leak-card:last-of-type { border-bottom: none; }
+
+.b-leak-top {
+  padding: 14px 20px 10px;
+  border-bottom: 1px solid var(--rule-light);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.b-leak-name {
+  font-family: var(--f-condensed);
+  font-size: 17px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--white);
+  line-height: 1.1;
+}
+
+.b-leak-sub {
+  font-family: var(--f-condensed);
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: rgba(242,240,235,0.35);
+  margin-top: 2px;
+}
+
+.b-leak-geo {
+  font-family: var(--f-condensed);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: rgba(242,240,235,0.35);
+  white-space: nowrap;
+  margin-top: 2px;
+}
+
+.b-leak-nums {
+  padding: 12px 20px 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  background: rgba(191,13,62,0.06);
+}
+
+.b-leak-ml {
+  font-family: var(--f-condensed);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(242,240,235,0.35);
+  margin-bottom: 2px;
+}
+
+.b-leak-mv {
+  font-family: var(--f-condensed);
+  font-size: 22px;
+  font-weight: 900;
+  color: rgba(242,240,235,0.6);
+  line-height: 1;
+}
+
+.b-leak-yr { text-align: right; }
+
+.b-leak-yl {
+  font-family: var(--f-condensed);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--yellow);
+  margin-bottom: 2px;
+}
+
+.b-leak-yv {
+  font-family: var(--f-condensed);
+  font-size: 36px;
+  font-weight: 900;
+  color: var(--yellow);
+  line-height: 1;
+}
+
+/* Desktop table rows */
+.b-table-row {
+  display: grid;
+  grid-template-columns: 2.5fr 1.2fr 1.4fr 1.6fr;
+  padding: 18px 40px;
+  border-bottom: 1px solid var(--rule);
+  align-items: center;
+}
+
+.b-table-row:last-child { border-bottom: none; }
+.b-table-row:hover { background: rgba(191,13,62,0.04); }
+
+.b-td-name {
+  font-family: var(--f-condensed);
+  font-size: 18px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--white);
+  line-height: 1.1;
+}
+
+.b-td-sub {
+  font-family: var(--f-condensed);
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: rgba(242,240,235,0.3);
+  margin-top: 3px;
+}
+
+.b-td-geo {
+  font-family: var(--f-condensed);
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(242,240,235,0.45);
+}
+
+.b-td-month {
+  font-family: var(--f-condensed);
+  font-size: 18px;
+  font-weight: 900;
+  color: rgba(242,240,235,0.5);
+  text-align: right;
+}
+
+.b-td-year {
+  font-family: var(--f-condensed);
+  font-size: 28px;
+  font-weight: 900;
+  color: var(--yellow);
+  text-align: right;
+}
+
+.b-td-year-sub {
+  font-family: var(--f-condensed);
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: rgba(245,196,0,0.5);
+  text-align: right;
+  margin-top: 2px;
+}
+
+.b-disclaimer {
+  padding: 10px 20px;
+  background: rgba(245,196,0,0.05);
+  border-top: 1px solid rgba(245,196,0,0.15);
+  font-size: 11px;
+  color: rgba(242,240,235,0.35);
+  font-style: italic;
+}
+
+.b-disclaimer.desktop { padding: 10px 40px; }
+
+/* SECTION */
+.b-section {
+  padding: 24px 20px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.b-section.desktop { padding: 32px 40px; }
+
+.b-two-col { display: grid; grid-template-columns: 1fr 1fr; border-bottom: 1px solid var(--rule); }
+.b-col-l { padding: 32px 40px; border-right: 1px solid var(--rule); }
+.b-col-r { padding: 32px 40px; }
+
+.b-sec-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.b-sec-num {
+  font-family: var(--f-condensed);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: var(--red);
+  flex-shrink: 0;
+  padding-top: 2px;
+}
+
+.b-sec-title {
+  font-family: var(--f-condensed);
+  font-size: 22px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--white);
+  line-height: 1.05;
+}
+
+.b-sec-title.desktop { font-size: 26px; }
+.b-sec-title span { color: var(--yellow); }
+
+/* CHECK LIST */
+.b-check-list { list-style: none; display: flex; flex-direction: column; gap: 0; }
+
+.b-check-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  font-size: 13px;
+  color: rgba(242,240,235,0.65);
+  line-height: 1.5;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--rule-light);
+}
+
+.b-check-list li:last-child { border-bottom: none; }
+
+.b-tick {
+  width: 16px; height: 16px;
+  border: 1px solid var(--red);
+  flex-shrink: 0;
+  margin-top: 1px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.b-tick::after {
+  content: '';
+  width: 6px; height: 4px;
+  border-left: 1.5px solid var(--red);
+  border-bottom: 1.5px solid var(--red);
+  transform: rotate(-45deg) translateY(-1px);
+  display: block;
+}
+
+/* CONVO */
+.b-convo-box {
+  background: var(--gray);
+  border-left: 3px solid var(--red);
+  padding: 16px 16px;
+  margin-top: 16px;
+}
+
+.b-convo-box.desktop { margin-top: 0; margin-bottom: 10px; padding: 16px 18px; }
+
+.b-convo-lbl {
+  font-family: var(--f-condensed);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--red);
+  margin-bottom: 8px;
+  display: block;
+}
+
+.b-convo-text {
+  font-size: 13px;
+  color: rgba(242,240,235,0.8);
+  line-height: 1.6;
+  font-style: italic;
+}
+
+.b-convo-alt {
+  background: var(--gray);
+  border-left: 3px solid rgba(242,240,235,0.12);
+  padding: 14px 16px;
+  margin-top: 8px;
+}
+
+.b-convo-alt.desktop { margin-top: 0; padding: 14px 18px; }
+
+.b-convo-alt-lbl {
+  font-family: var(--f-condensed);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(242,240,235,0.35);
+  margin-bottom: 6px;
+  display: block;
+}
+
+/* MINI CARDS / THREE COL */
+.b-mini-cards { border-top: 1px solid var(--rule); }
+.b-three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; border-bottom: 1px solid var(--rule); }
+
+.b-mini-card {
+  padding: 20px 20px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.b-three-card {
+  padding: 28px 32px;
+  border-right: 1px solid var(--rule);
+}
+
+.b-three-card:last-child { border-right: none; background: var(--gray); }
+.b-three-card:nth-child(2) { background: rgba(191,13,62,0.05); }
+
+.b-card-lbl {
+  font-family: var(--f-condensed);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--yellow);
+  margin-bottom: 12px;
+  display: block;
+}
+
+.b-card-lbl.desktop {
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--rule);
+  margin-bottom: 14px;
+}
+
+.b-card-lbl.red { color: var(--red); }
+.b-card-lbl.dim { color: rgba(242,240,235,0.3); }
+
+.b-dot-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+
+.b-dot-list li {
+  font-size: 12px;
+  color: rgba(242,240,235,0.6);
+  line-height: 1.5;
+  padding-left: 14px;
+  position: relative;
+}
+
+.b-dot-list li::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 7px;
+  width: 4px; height: 4px;
+  background: var(--red);
+}
+
+/* BETA */
+.b-beta {
+  padding: 20px 20px;
+  border-bottom: 1px solid var(--rule);
+  background: var(--gray);
+}
+
+.b-beta.desktop {
+  padding: 18px 40px;
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.b-beta-tag {
+  display: inline-block;
+  font-family: var(--f-condensed);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  background: var(--red);
+  color: var(--white);
+  padding: 3px 8px;
+  margin-bottom: 12px;
+}
+
+.b-beta-tag.desktop { flex-shrink: 0; margin-bottom: 0; margin-top: 2px; padding: 4px 10px; }
+
+.b-beta-text {
+  font-size: 13px;
+  color: rgba(242,240,235,0.55);
+  line-height: 1.6;
+}
+
+.b-beta-text strong { color: var(--white); }
+
+/* CLOSE */
+.b-close-grid { display: grid; grid-template-columns: 1fr 1fr; }
+.b-close-left {
+  padding: 32px 20px;
+  border-bottom: 1px solid var(--rule);
+  background: var(--black);
+}
+.b-close-left.desktop { padding: 44px 40px; border-bottom: none; border-right: 1px solid var(--rule); }
+
+.b-close-headline {
+  font-family: var(--f-condensed);
+  font-size: 52px;
+  font-weight: 900;
+  text-transform: uppercase;
+  line-height: 0.92;
+  color: var(--white);
+  margin-bottom: 16px;
+}
+
+.b-close-headline.desktop { font-size: 56px; margin-bottom: 20px; }
+.b-close-headline .yellow { color: var(--yellow); }
+.b-close-headline .underline {
+  text-decoration: underline;
+  text-decoration-color: var(--red);
+  text-underline-offset: 4px;
+}
+
+.b-close-sub {
+  font-size: 13px;
+  color: rgba(242,240,235,0.5);
+  line-height: 1.6;
+  border-top: 1px solid var(--rule);
+  padding-top: 14px;
+}
+
+.b-close-sub.desktop { padding-top: 18px; color: rgba(242,240,235,0.45); }
+
+/* BENEFIT */
+.b-benefit {
+  padding: 28px 20px;
+  background: var(--red);
+}
+
+.b-benefit.desktop { padding: 44px 40px; }
+
+.b-benefit-eye {
+  font-family: var(--f-condensed);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.55);
+  margin-bottom: 12px;
+  display: block;
+}
+
+.b-benefit-pct {
+  font-family: var(--f-condensed);
+  font-size: 80px;
+  font-weight: 900;
+  line-height: 0.9;
+  color: var(--yellow);
+  margin-bottom: 4px;
+}
+
+.b-benefit-pct.desktop { font-size: 96px; line-height: 0.88; margin-bottom: 6px; }
+
+.b-benefit-desc {
+  font-family: var(--f-condensed);
+  font-size: 22px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--white);
+  margin-bottom: 12px;
+}
+
+.b-benefit-desc.desktop { font-size: 24px; margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.2); }
+
+.b-benefit-detail {
+  font-size: 12px;
+  color: rgba(255,255,255,0.65);
+  line-height: 1.55;
+  border-top: 1px solid rgba(255,255,255,0.2);
+  padding-top: 12px;
+}
+
+.b-benefit-detail.desktop { border-top: none; padding-top: 0; font-size: 13px; color: rgba(255,255,255,0.6); }
+
+/* FOOTER */
+.b-footer {
+  padding: 16px 20px;
+  border-top: 1px solid var(--rule);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.b-footer.desktop { padding: 14px 40px; }
+
+.b-footer-brand {
+  font-family: var(--f-condensed);
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(242,240,235,0.3);
+}
+
+.b-footer-tag {
+  font-family: var(--f-condensed);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(242,240,235,0.15);
+}
+</style>
+</head>
+<body>
+
+<!-- LOADER -->
+<div id="loader">
+  <span class="loader-brand">WhatAMatters</span>
+  <div class="loader-dot"></div>
+  <span class="loader-label">Revenue Leak Score™</span>
+</div>
+
+<!-- FALLBACK (shown only if JS fails) -->
+<div id="fallback">
+  <div class="fb-header">
+    <span class="fb-brand">WhatAMatters</span>
+    <span class="fb-badge">Revenue Leak Score™</span>
+  </div>
+  <div class="fb-title">Select your version</div>
+  <div class="fb-grid">
+    <a class="fb-card" href="?v=mobile-es">
+      <span class="fb-card-label">Mobile · Español</span>
+      <div class="fb-card-name">Versión Móvil</div>
+      <div class="fb-card-sub">WhatsApp / iMessage</div>
+    </a>
+    <a class="fb-card" href="?v=mobile-en">
+      <span class="fb-card-label">Mobile · English</span>
+      <div class="fb-card-name">Mobile Version</div>
+      <div class="fb-card-sub">WhatsApp / iMessage</div>
+    </a>
+    <a class="fb-card" href="?v=desktop-es">
+      <span class="fb-card-label">Desktop · Español</span>
+      <div class="fb-card-name">Versión Desktop</div>
+      <div class="fb-card-sub">Email</div>
+    </a>
+    <a class="fb-card" href="?v=desktop-en">
+      <span class="fb-card-label">Desktop · English</span>
+      <div class="fb-card-name">Desktop Version</div>
+      <div class="fb-card-sub">Email</div>
+    </a>
+  </div>
+</div>
+
+<!-- BROCHURE MOUNT POINT -->
+<div id="brochure"></div>
+
+<script>
+// ============================================================
+// DETECTION ENGINE
+// ============================================================
+(function() {
+  var isMobile = /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+              || (window.innerWidth <= 768);
+
+  // Check URL param first (for manual override or fallback links)
+  var urlParam = new URLSearchParams(window.location.search).get('v');
+  var isSpanish;
+  var lang = navigator.language || navigator.userLanguage || 'en';
+  isSpanish = lang.toLowerCase().startsWith('es');
+
+  var version;
+  if (urlParam) {
+    version = urlParam; // manual override
+  } else {
+    if (isMobile && isSpanish)  version = 'mobile-es';
+    if (isMobile && !isSpanish) version = 'mobile-en';
+    if (!isMobile && isSpanish) version = 'desktop-es';
+    if (!isMobile && !isSpanish) version = 'desktop-en';
+  }
+
+  // Determine display language from version
+  var es = version.endsWith('-es');
+  var mobile = version.startsWith('mobile');
+
+  // Build the content
+  var content = buildBrochure(es, mobile);
+  document.getElementById('brochure').innerHTML = content;
+  document.getElementById('brochure').style.display = 'block';
+  document.getElementById('loader').style.display = 'none';
+
+  // Set html lang
+  document.documentElement.lang = es ? 'es' : 'en';
+  document.title = es
+    ? 'Revenue Leak Score™ — WhatAMatters'
+    : 'Revenue Leak Score™ — WhatAMatters';
+
+})();
+
+// ============================================================
+// CONTENT BUILDER
+// ============================================================
+function buildBrochure(es, mobile) {
+
+  var t = {
+    eyebrow:    es ? 'Revenue Leak Score™ · 2026'               : 'Revenue Leak Score™ · 2026',
+    campaign:   es ? 'El Impuesto de la Invisibilidad · Campaña 2026' : 'The Invisibility Tax · Campaign 2026',
+    h1a:        es ? 'SER'                                       : 'BEING',
+    h1b:        es ? 'INVISIBLE'                                 : 'INVISIBLE',
+    h1c:        es ? 'TIENE UN'                                  : 'HAS A',
+    h1d:        es ? 'PRECIO.'                                   : 'PRICE.',
+    subtext:    es ? 'Sabemos el número exacto · Montgomery Co.' : 'We know the exact number · Montgomery Co.',
+    sublabel:   es ? 'Revenue Leak Score™ — Metodología v0.6'   : 'Revenue Leak Score™ — Methodology v0.6',
+    tagline:    es ? 'Sabemos el número exacto · MoCo, MD · 2026': 'We know the exact number · MoCo, MD · 2026',
+    desc:       es
+      ? 'Una auditoría de <strong>45 minutos</strong> que convierte tu presencia digital en un score (0–100), identifica los <strong>5 puntos donde se fuga el dinero</strong> y pone el <strong>dólar exacto sobre la mesa.</strong> Sin opiniones. Con evidencia verificable. Con un plan de 45 días para recuperarlo.'
+      : 'A <strong>45-minute audit</strong> that turns your digital presence into a score (0–100), finds the <strong>5 places where money leaks</strong>, and puts the <strong>exact dollar amount on the table.</strong> No opinions. Verifiable evidence. A 45-day plan to recover it.',
+    q1:         es ? '¿Qué es?'              : 'What is it?',
+    a1:         es ? 'Una auditoría digital de 45 minutos que encuentra exactamente cuánto dinero está perdiendo un negocio por no aparecer bien en Google — con un score, un monto en dólares y un plan de 45 días.'
+                   : 'A 45-minute digital audit that finds exactly how much money a business is losing by not showing up on Google — with a score, a dollar amount, and a 45-day plan.',
+    q2:         es ? '¿Qué logra?'           : 'What does it do?',
+    a2:         es ? 'Le da al dueño su número exacto. No el promedio. Su pérdida mensual y anual real — desglosada por pilar: Visibilidad, Credibilidad, Conversión, Entrega.'
+                   : 'Gives the owner their exact number. Not the average. Their real monthly and yearly loss — by pillar: Visibility, Credibility, Conversion, Delivery.',
+    q3:         es ? '¿Qué debes pedir?'    : 'What should you ask for?',
+    a3:         es ? 'Una sola cosa: permiso para correr su Revenue Leak Score. Sin hablar de precios. Sin pitch. Solo abrir la puerta.'
+                   : 'One thing only: permission to run their Revenue Leak Score. No pricing talk. No pitch. Just open the door.',
+    bandaText:  es ? 'Costo de la invisibilidad\npor vertical · MoCo, MD'
+                   : 'Cost of invisibility\nby vertical · MoCo, MD',
+    bandaNote:  es ? 'Promedios de mercado.\nNúmero real calculado por negocio.'
+                   : 'Market averages only.\nReal number calculated per business.',
+    tableNote:  es ? 'Promedios de mercado para Montgomery County. El Revenue Leak Score calcula el número real y específico para cada negocio — no el promedio.'
+                   : 'Market averages for Montgomery County. The Revenue Leak Score calculates the real, specific number for each business — not the average.',
+    thType:     es ? 'Tipo de Negocio'      : 'Business Type',
+    thArea:     es ? 'Zona'                 : 'Area',
+    thMonth:    es ? 'Pierde / Mes'         : 'Loses / Month',
+    thYear:     es ? 'Pierde / Año'         : 'Loses / Year',
+    yearAvg:    es ? 'al año prom.'         : 'per year avg.',
+    disclaimer: es ? '⚠ Promedios de mercado. El Revenue Leak Score calcula el número real para cada negocio específico.'
+                   : '⚠ Market averages only. The Revenue Leak Score calculates the real number for each specific business.',
+    sec1title:  es ? 'A quién\n<span>llamar</span>'  : 'Who\n<span>to call</span>',
+    checks:     es ? [
+      'Dueño de negocio, 3+ años operando, depende del boca a boca',
+      'Tiene empleados pero ningún sistema digital de seguimiento',
+      'No sabe cuántos clientes pierde online',
+      'Su competidor anglosajón aparece primero en Google',
+      'Quiere crecer pero no sabe por dónde empezar digitalmente'
+    ] : [
+      'Business owner, 3+ years operating, depends on word of mouth',
+      'Has employees but no digital tracking system',
+      'Does not know how many customers they lose online',
+      'Their English-speaking competitor shows up first on Google',
+      'Wants to grow but does not know where to start digitally'
+    ],
+    sec2title:  es ? 'Cómo\n<span>abrirla</span>'   : 'How to\n<span>open it</span>',
+    yourLine:   es ? 'Tu línea'             : 'Your line',
+    convoText:  es ? '"Estamos en la fase de casos de estudio — precios preferenciales. Pero primero hagamos la auditoría para que veas los números. ¿Cuándo tienes 45 minutos?"'
+                   : '"We\'re in the case-study phase — reduced pricing. But first, let\'s run the audit so you can see the numbers. When do you have 45 minutes?"',
+    ifPrice:    es ? 'Si pregunta el precio' : 'If they ask for the price',
+    ifPriceT:   es ? 'Repite la misma línea. No saltes al precio antes de que vea su número.'
+                   : 'Repeat the same line. Do not jump to pricing before they see their number.',
+    gets:       es ? 'Qué recibe el negocio' : 'What the business gets',
+    getsItems:  es ? [
+      'Un score (0–100) que muestra el estado actual de su presencia digital',
+      'Los 5 lugares donde pierde más dinero, con el monto exacto',
+      'Su pérdida real mensual y anual — su número, no el promedio',
+      'Un plan de 45 días con pasos concretos para recuperarlo'
+    ] : [
+      'A score (0–100) showing current digital presence',
+      'The 5 places losing the most money, with exact dollar amount',
+      'Their real monthly & yearly loss — their number, not the average',
+      'A 45-day plan with concrete steps to recover it'
+    ],
+    dont:       es ? 'Qué no hacer'         : 'What not to do',
+    dontItems:  es ? [
+      'No hablar de precios ni prometer resultados',
+      'Di "Google" y "clientes" — sin detalles técnicos',
+      'No presentar esto como "una agencia" — es diagnóstico gratis',
+      'No insistir si no hay interés. El próximo prospecto es el correcto'
+    ] : [
+      'Do not talk pricing or promise results',
+      'Say "Google" and "customers" — no technical details',
+      'Don\'t pitch this as "an agency" — it\'s a free diagnostic',
+      'Don\'t push if no interest. The next prospect is the right one'
+    ],
+    caseTitle:  es ? 'Programa Casos de Éxito' : 'Case Study Program',
+    caseItems:  es ? [
+      'Fase beta — precios preferenciales para negocios tempranos',
+      'Sus resultados reales son nuestra campaña en MoCo',
+      'Su marca recibe visibilidad sin costo para ellos',
+      'Son parte de algo que se construye para esta comunidad'
+    ] : [
+      'Beta phase — reduced pricing for early businesses',
+      'Real results become our MoCo social media campaign',
+      'Their brand gets visibility at no cost to them',
+      'They\'re part of something built for this community'
+    ],
+    betaTag:    es ? 'Programa Casos de Éxito' : 'Case Study Phase',
+    betaText:   es ? 'Los negocios que entran en esta fase beta son parte de algo más grande. <strong>Precios preferenciales</strong> durante el lanzamiento. Sus resultados reales se convierten en nuestra campaña en MoCo — su negocio se convierte en un caso de éxito real, sin costo para ellos.'
+                   : 'Businesses that join this beta phase are part of something bigger. <strong>Reduced pricing</strong> during launch. Their real results become our MoCo social media campaign — their business becomes a real success story, at no cost to them.',
+    closeH:     es ? 'TU ÚNICO\n<span class="yellow">OBJETIVO:</span>\nCONSEGUIR\n<span class="underline">PERMISO.</span>'
+                   : 'YOUR\nONLY\n<span class="yellow">GOAL:</span>\nGET\n<span class="underline">PERMIS-\nSION.</span>',
+    closeSub:   es ? 'No vendas. No expliques precios. Solo abre la puerta. La auditoría hace el resto — y cuenta la historia mejor que cualquier pitch.'
+                   : 'Do not sell. Do not explain pricing. Just open the door. The audit does the rest — and tells the story better than any pitch could.',
+    benefitEye: es ? 'Tu beneficio como embajador' : 'Your benefit as an ambassador',
+    benefitPct: '20%',
+    benefitDesc:es ? 'Comisión de por vida'   : 'Lifetime Commission',
+    benefitDet: es ? 'Por cada cliente que llegue a través de ti, mientras se mantenga activo con WhatAMatters. Sin límites. Sin vencimiento.'
+                   : 'For every client who comes through you, as long as they stay active with WhatAMatters. No limits. No expiration.',
+    badge:      es ? 'Beta · Plazas Limitadas' : 'Beta · Limited Spots',
+    footerTag:  'Revenue Leak Score™ · MoCo · 2026',
+    headerProd: 'Revenue Leak Score™',
+    brand:      'WhatAMatters · Montgomery County, MD'
+  };
+
+  // TABLE DATA
+  var rows = [
+    { name: es ? 'Contractors' : 'Contractors',    sub: 'Roofing · Remodeling · HVAC', geo: 'Gaithersburg', month: '~$16,464', year: '$197,568' },
+    { name: es ? 'Tax & Seguros' : 'Tax & Insurance', sub: 'ITIN · Personal · Business', geo: 'Silver Spring', month: '~$2,842',  year: '$34,100'  },
+    { name: es ? 'Cleaning' : 'Cleaning',           sub: es ? 'Residencial · Oficinas' : 'Residential · Office', geo: 'Rockville', month: '~$1,353', year: '$16,230' },
+    { name: es ? 'Hospitality' : 'Hospitality',     sub: es ? 'Restaurante · Sports Bar' : 'Restaurant · Sports Bar', geo: 'Damascus', month: '~$215', year: '$2,586' }
+  ];
+
+  function checks(arr) {
+    return arr.map(function(c) {
+      return '<li><div class="b-tick"></div>' + c + '</li>';
+    }).join('');
+  }
+
+  function dots(arr) {
+    return arr.map(function(c) {
+      return '<li>' + c + '</li>';
+    }).join('');
+  }
+
+  function closeLines(str) {
+    return str.split('\n').map(function(l){ return l; }).join('<br>');
+  }
+
+  if (mobile) {
+    // ---- MOBILE LAYOUT ----
+    var leakCards = rows.map(function(r) {
+      return '<div class="b-leak-card">'
+        + '<div class="b-leak-top"><div><div class="b-leak-name">' + r.name + '</div><div class="b-leak-sub">' + r.sub + '</div></div><div class="b-leak-geo">' + r.geo + '</div></div>'
+        + '<div class="b-leak-nums"><div><div class="b-leak-ml">' + (es ? '/ mes' : '/ month') + '</div><div class="b-leak-mv">' + r.month + '</div></div>'
+        + '<div class="b-leak-yr"><div class="b-leak-yl">' + (es ? '/ año' : '/ year') + '</div><div class="b-leak-yv">' + r.year + '</div></div></div>'
+        + '</div>';
+    }).join('');
+
+    return '<div class="bro" style="background:var(--black)">'
+      + '<header class="b-header" style="flex-wrap:wrap">'
+        + '<div class="b-header-brand" style="padding:14px 20px;border-right:none">' + 'WhatAMatters' + '</div>'
+        + '<div class="b-header-badge">' + t.badge + '</div>'
+      + '</header>'
+      + '<section class="b-hero">'
+        + '<div class="b-hero-inner">'
+          + '<div class="b-eyebrow-row"><span class="b-eyebrow-text">' + t.eyebrow + '</span><div class="b-eyebrow-line grow"></div></div>'
+          + '<h1 class="b-h1">' + t.h1a + '<br><span class="red">' + t.h1b + '</span><br>' + t.h1c + '<br><span class="yellow">' + t.h1d + '</span></h1>'
+          + '<div class="b-sub-line"><div class="b-rule-short"></div><span class="b-sub-text">' + t.subtext + '</span></div>'
+          + '<p class="b-hero-desc">' + t.desc + '</p>'
+        + '</div>'
+      + '</section>'
+      + '<section class="b-triple">'
+        + '<div class="b-triple-item"><span class="b-triple-num">01 ——</span><div class="b-triple-q">' + t.q1 + '</div><p class="b-triple-a">' + t.a1 + '</p></div>'
+        + '<div class="b-triple-item"><span class="b-triple-num">02 ——</span><div class="b-triple-q">' + t.q2 + '</div><p class="b-triple-a">' + t.a2 + '</p></div>'
+        + '<div class="b-triple-item"><span class="b-triple-num">03 ——</span><div class="b-triple-q">' + t.q3 + '</div><p class="b-triple-a">' + t.a3 + '</p></div>'
+      + '</section>'
+      + '<div class="b-banda"><span class="b-banda-dollar">$</span><div class="b-banda-vr"></div><div class="b-banda-text">' + t.bandaText.replace('\n','<br>') + '</div></div>'
+      + '<section class="b-table-block">'
+        + '<p class="b-table-note">' + t.tableNote + '</p>'
+        + leakCards
+        + '<div class="b-disclaimer">' + t.disclaimer + '</div>'
+      + '</section>'
+      + '<section class="b-section"><div class="b-sec-head"><span class="b-sec-num">01</span><div class="b-sec-title">' + t.sec1title + '</div></div><ul class="b-check-list">' + checks(t.checks) + '</ul></section>'
+      + '<section class="b-section"><div class="b-sec-head"><span class="b-sec-num">02</span><div class="b-sec-title">' + t.sec2title + '</div></div>'
+        + '<div class="b-convo-box"><span class="b-convo-lbl">' + t.yourLine + '</span><p class="b-convo-text">' + t.convoText + '</p></div>'
+        + '<div class="b-convo-alt"><span class="b-convo-alt-lbl">' + t.ifPrice + '</span><p class="b-convo-text" style="font-style:normal;color:rgba(242,240,235,.55)">' + t.ifPriceT + '</p></div>'
+      + '</section>'
+      + '<div class="b-mini-cards">'
+        + '<div class="b-mini-card"><span class="b-card-lbl">' + t.gets + '</span><ul class="b-dot-list">' + dots(t.getsItems) + '</ul></div>'
+        + '<div class="b-mini-card"><span class="b-card-lbl red">' + t.dont + '</span><ul class="b-dot-list">' + dots(t.dontItems) + '</ul></div>'
+      + '</div>'
+      + '<div class="b-beta"><span class="b-beta-tag">' + t.betaTag + '</span><p class="b-beta-text">' + t.betaText + '</p></div>'
+      + '<section class="b-close-left"><div class="b-close-headline">' + closeLines(t.closeH) + '</div><p class="b-close-sub">' + t.closeSub + '</p></section>'
+      + '<section class="b-benefit"><span class="b-benefit-eye">' + t.benefitEye + '</span><div class="b-benefit-pct">' + t.benefitPct + '</div><div class="b-benefit-desc">' + t.benefitDesc + '</div><p class="b-benefit-detail">' + t.benefitDet + '</p></section>'
+      + '<footer class="b-footer"><span class="b-footer-brand">WhatAMatters</span><span class="b-footer-tag">' + t.footerTag + '</span></footer>'
+    + '</div>';
+
+  } else {
+    // ---- DESKTOP LAYOUT ----
+    var tableRows = rows.map(function(r) {
+      return '<div class="b-table-row">'
+        + '<div><div class="b-td-name">' + r.name + '</div><div class="b-td-sub">' + r.sub + '</div></div>'
+        + '<div class="b-td-geo">' + r.geo + '</div>'
+        + '<div class="b-td-month">' + r.month + '</div>'
+        + '<div><div class="b-td-year">' + r.year + '</div><div class="b-td-year-sub">' + t.yearAvg + '</div></div>'
+        + '</div>';
+    }).join('');
+
+    return '<div class="bro bro-desktop" style="background:var(--black)">'
+      + '<header class="b-header">'
+        + '<div class="b-header-brand">' + t.brand + '</div>'
+        + '<div class="b-header-product">' + t.headerProd + '</div>'
+        + '<div class="b-header-badge">' + t.badge + '</div>'
+      + '</header>'
+      + '<section class="b-hero"><div class="b-hero-inner desktop">'
+        + '<div class="b-hero-left"><div class="b-eyebrow-row"><div class="b-eyebrow-line"></div><span class="b-eyebrow-text">' + t.campaign + '</span></div>'
+          + '<h1 class="b-h1 desktop">' + t.h1a + '<br><span class="red">' + t.h1b + '</span><br>' + t.h1c + '<br><span class="yellow">' + t.h1d + '</span></h1>'
+        + '</div>'
+        + '<div class="b-hero-right"><div><div class="b-hero-sub-label">' + t.sublabel + '</div><p class="b-hero-desc desktop">' + t.desc + '</p></div><div class="b-hero-tagline">' + t.tagline + '</div></div>'
+      + '</div></section>'
+      + '<div class="b-triple desktop">'
+        + '<div class="b-triple-item desktop"><span class="b-triple-num">01 ——</span><div class="b-triple-q desktop">' + t.q1 + '</div><p class="b-triple-a">' + t.a1 + '</p></div>'
+        + '<div class="b-triple-item desktop"><span class="b-triple-num">02 ——</span><div class="b-triple-q desktop">' + t.q2 + '</div><p class="b-triple-a">' + t.a2 + '</p></div>'
+        + '<div class="b-triple-item desktop"><span class="b-triple-num">03 ——</span><div class="b-triple-q desktop">' + t.q3 + '</div><p class="b-triple-a">' + t.a3 + '</p></div>'
+      + '</div>'
+      + '<div class="b-banda desktop"><span class="b-banda-dollar desktop">$</span><div class="b-banda-vr"></div><div class="b-banda-text desktop">' + t.bandaText.replace('\n','<br>') + '</div><div class="b-banda-note">' + t.bandaNote.replace('\n','<br>') + '</div></div>'
+      + '<div class="b-table-block"><div class="b-table-note desktop">' + t.tableNote + '</div>'
+        + '<div class="b-table-head"><div class="b-th">' + t.thType + '</div><div class="b-th">' + t.thArea + '</div><div class="b-th" style="text-align:right">' + t.thMonth + '</div><div class="b-th" style="text-align:right">' + t.thYear + '</div></div>'
+        + tableRows
+        + '<div class="b-disclaimer desktop">' + t.disclaimer + '</div>'
+      + '</div>'
+      + '<div class="b-two-col">'
+        + '<div class="b-col-l"><span class="b-sec-num">01 ——</span><div class="b-sec-title desktop">' + t.sec1title + '</div><ul class="b-check-list">' + checks(t.checks) + '</ul></div>'
+        + '<div class="b-col-r"><span class="b-sec-num">02 ——</span><div class="b-sec-title desktop">' + t.sec2title + '</div>'
+          + '<div class="b-convo-box desktop"><span class="b-convo-lbl">' + t.yourLine + '</span><p class="b-convo-text">' + t.convoText + '</p></div>'
+          + '<div class="b-convo-alt desktop"><span class="b-convo-alt-lbl">' + t.ifPrice + '</span><p class="b-convo-text" style="font-style:normal;font-size:13px;color:rgba(242,240,235,.5)">' + t.ifPriceT + '</p></div>'
+        + '</div>'
+      + '</div>'
+      + '<div class="b-three-col">'
+        + '<div class="b-three-card"><span class="b-card-lbl desktop">' + t.gets + '</span><ul class="b-dot-list">' + dots(t.getsItems) + '</ul></div>'
+        + '<div class="b-three-card"><span class="b-card-lbl red desktop">' + t.dont + '</span><ul class="b-dot-list">' + dots(t.dontItems) + '</ul></div>'
+        + '<div class="b-three-card"><span class="b-card-lbl dim desktop">' + t.caseTitle + '</span><ul class="b-dot-list">' + dots(t.caseItems) + '</ul></div>'
+      + '</div>'
+      + '<div class="b-beta desktop"><span class="b-beta-tag desktop">' + t.betaTag + '</span><p class="b-beta-text">' + t.betaText + '</p></div>'
+      + '<div class="b-close-grid">'
+        + '<div class="b-close-left desktop"><div class="b-close-headline desktop">' + closeLines(t.closeH) + '</div><p class="b-close-sub desktop">' + t.closeSub + '</p></div>'
+        + '<div class="b-benefit desktop"><span class="b-benefit-eye">' + t.benefitEye + '</span><div class="b-benefit-pct desktop">' + t.benefitPct + '</div><div class="b-benefit-desc desktop">' + t.benefitDesc + '</div><p class="b-benefit-detail desktop">' + t.benefitDet + '</p></div>'
+      + '</div>'
+      + '<footer class="b-footer desktop"><span class="b-footer-brand">' + t.brand + ' · Digital Studio</span><span class="b-footer-tag">' + t.footerTag + '</span></footer>'
+    + '</div>';
+  }
+}
+
+// Safety fallback — if something breaks, show the manual selector
+window.addEventListener('error', function() {
+  document.getElementById('loader').style.display = 'none';
+  document.getElementById('fallback').style.display = 'block';
+});
+
+// URL param override UI — add ?v=mobile-es etc. to force any version
+// Example: whatamatters.com/kit?v=desktop-en
+</script>
+</body>
+</html>
