@@ -1,0 +1,454 @@
+.page {
+  --color-bg: #0a0a0a;
+  --color-bg-sec: #141414;
+  --color-red: #bf0d3e;
+  --color-text: #f2f0eb;
+  --color-data: #f5c400;
+  background: var(--color-bg);
+  color: var(--color-text);
+  width: 100%;
+  max-width: 100vw;
+  min-height: 100vh;
+  overflow-x: hidden;
+  font-family: var(--font-barlow), sans-serif;
+}
+
+.page * {
+  box-sizing: border-box;
+}
+
+.container {
+  width: min(100%, 1180px);
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.section {
+  padding: 72px 0;
+  border-top: 1px solid rgba(242, 240, 235, 0.1);
+}
+
+.entryBand {
+  min-height: 40px;
+  background: var(--color-red);
+  color: var(--color-text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 8px 16px;
+  font-family: var(--font-barlow-condensed), sans-serif;
+  font-weight: 900;
+  font-size: clamp(0.7rem, 1.3vw, 0.95rem);
+  line-height: 1;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.hero {
+  border-top: 0;
+  padding-top: 56px;
+}
+
+.heroGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(280px, 0.7fr);
+  gap: 40px;
+  align-items: end;
+}
+
+.heroCopy {
+  display: grid;
+  gap: 28px;
+}
+
+.heroTitle,
+.sectionTitle,
+.stepTitle,
+.cardTitle,
+.specLabel,
+.specsInline,
+.finalTitle,
+.cardKicker,
+.listLead,
+.cardLocation {
+  font-family: var(--font-barlow-condensed), sans-serif;
+  text-transform: uppercase;
+}
+
+.heroTitle {
+  margin: 0;
+  font-size: clamp(3rem, 7vw, 6.4rem);
+  line-height: 0.92;
+  font-weight: 900;
+  letter-spacing: 0.01em;
+}
+
+.heroTitleBreak {
+  display: block;
+  margin-top: 0.22em;
+}
+
+.bodyLarge,
+.bodyText,
+.referenceLabel,
+.footnote,
+.criteriaItem,
+.disclaimer,
+.specValue {
+  margin: 0;
+  font-family: var(--font-barlow), sans-serif;
+}
+
+.bodyLarge {
+  max-width: 760px;
+  font-size: clamp(1.1rem, 1.9vw, 1.45rem);
+  line-height: 1.45;
+  font-weight: 400;
+}
+
+.bodyText {
+  font-size: 1.05rem;
+  line-height: 1.55;
+  color: rgba(242, 240, 235, 0.84);
+}
+
+.cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 54px;
+  padding: 16px 24px;
+  background: var(--color-red);
+  color: var(--color-text);
+  text-decoration: none;
+  font-family: var(--font-barlow-condensed), sans-serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  border: 1px solid var(--color-red);
+}
+
+.cta:hover,
+.cta:focus-visible {
+  background: transparent;
+  color: var(--color-text);
+  outline: 0;
+}
+
+.referenceBlock {
+  padding: 24px 0 8px;
+  border-top: 1px solid rgba(242, 240, 235, 0.14);
+}
+
+.referenceValue {
+  margin: 0;
+  font-family: var(--font-barlow-condensed), sans-serif;
+  font-size: clamp(3.1rem, 5vw, 5.2rem);
+  line-height: 0.92;
+  font-weight: 900;
+  color: var(--color-data);
+  text-transform: uppercase;
+}
+
+.referenceLabel {
+  margin-top: 14px;
+  font-size: 1rem;
+  line-height: 1.45;
+  color: rgba(242, 240, 235, 0.7);
+}
+
+.sectionIntro {
+  display: grid;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.sectionTitle {
+  margin: 0;
+  font-size: clamp(2.4rem, 5vw, 4.8rem);
+  line-height: 0.94;
+  font-weight: 900;
+}
+
+.cardGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.dataCard,
+.specsBlock,
+.stepCard {
+  background: var(--color-bg-sec);
+  border: 1px solid rgba(242, 240, 235, 0.1);
+}
+
+.dataCard {
+  padding: 28px;
+  display: grid;
+  gap: 14px;
+}
+
+.cardTitle {
+  margin: 0;
+  font-size: 1.5rem;
+  line-height: 1;
+  font-weight: 700;
+}
+
+.cardLocation {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1;
+  font-weight: 700;
+  color: rgba(242, 240, 235, 0.92);
+}
+
+.cardValue {
+  margin: 0;
+  font-family: var(--font-barlow-condensed), sans-serif;
+  font-size: clamp(2.8rem, 4vw, 4rem);
+  line-height: 0.95;
+  font-weight: 900;
+  color: var(--color-data);
+}
+
+.cardKicker {
+  margin: 0;
+  font-size: 1.15rem;
+  line-height: 1;
+  font-weight: 900;
+  color: var(--color-red);
+}
+
+.footnote {
+  margin-top: 24px;
+  display: grid;
+  gap: 6px;
+  font-size: 0.92rem;
+  line-height: 1.5;
+  color: rgba(242, 240, 235, 0.6);
+}
+
+.numberedList {
+  display: grid;
+}
+
+.numberedItem {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr);
+  gap: 18px;
+  padding: 24px 0;
+  border-top: 1px solid rgba(242, 240, 235, 0.1);
+}
+
+.numberedItem:last-child {
+  border-bottom: 1px solid rgba(242, 240, 235, 0.1);
+}
+
+.itemNumber,
+.stepNumber {
+  font-family: var(--font-barlow-condensed), sans-serif;
+  font-weight: 900;
+  color: var(--color-red);
+  text-transform: uppercase;
+}
+
+.itemNumber {
+  font-size: 2.6rem;
+  line-height: 0.9;
+}
+
+.itemTitle {
+  margin: 0 0 8px;
+  font-size: 1.6rem;
+  line-height: 1;
+  font-weight: 700;
+}
+
+.specsBlock {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+  padding: 28px;
+  margin: 28px 0 18px;
+}
+
+.specLabel {
+  margin: 0 0 6px;
+  font-size: 1.2rem;
+  line-height: 1;
+  font-weight: 700;
+}
+
+.specValue {
+  font-size: 1rem;
+  line-height: 1.45;
+  color: rgba(242, 240, 235, 0.84);
+}
+
+.stepsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.stepCard {
+  padding: 28px;
+  display: grid;
+  gap: 18px;
+}
+
+.stepNumber {
+  font-size: clamp(4rem, 8vw, 6rem);
+  line-height: 0.82;
+}
+
+.stepTitle {
+  margin: 0;
+  font-size: 1.5rem;
+  line-height: 1;
+  font-weight: 700;
+}
+
+.criteriaList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 16px;
+}
+
+.criteriaItem {
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+  font-size: 1.08rem;
+  line-height: 1.45;
+  color: rgba(242, 240, 235, 0.92);
+}
+
+.criteriaMark {
+  color: var(--color-data);
+  font-family: var(--font-barlow-condensed), sans-serif;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.finalMark {
+  color: var(--color-red);
+  font-family: var(--font-barlow-condensed), sans-serif;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.ctaBlock,
+.finalWrap {
+  display: grid;
+  gap: 24px;
+}
+
+.ctaBlock {
+  margin-top: 28px;
+}
+
+.finalSection {
+  padding-bottom: 88px;
+}
+
+.finalTitle {
+  margin: 0;
+  font-size: clamp(3rem, 6.2vw, 5.8rem);
+  line-height: 0.92;
+  font-weight: 900;
+}
+
+.finalListBlock {
+  display: grid;
+  gap: 14px;
+}
+
+.listLead {
+  margin: 0;
+  font-size: 1.3rem;
+  line-height: 1;
+  font-weight: 700;
+}
+
+.specsInline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px 24px;
+  font-size: 1.1rem;
+  line-height: 1.1;
+  font-weight: 700;
+}
+
+.disclaimer {
+  font-size: 0.96rem;
+  line-height: 1.5;
+  color: rgba(242, 240, 235, 0.6);
+  text-align: center;
+}
+
+@media (max-width: 1180px) {
+  .heroGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .referenceBlock {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 960px) {
+  .heroGrid,
+  .cardGrid,
+  .stepsGrid,
+  .specsBlock {
+    grid-template-columns: 1fr;
+  }
+
+  .hero {
+    padding-top: 40px;
+  }
+
+  .referenceBlock {
+    padding-top: 8px;
+  }
+}
+
+@media (max-width: 640px) {
+  .container {
+    padding: 0 16px;
+  }
+
+  .section {
+    padding: 56px 0;
+  }
+
+  .entryBand {
+    padding: 10px 12px;
+    line-height: 1.1;
+  }
+
+  .numberedItem {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .dataCard,
+  .stepCard,
+  .specsBlock {
+    padding: 22px;
+  }
+
+  .criteriaItem {
+    grid-template-columns: 20px minmax(0, 1fr);
+    gap: 10px;
+  }
+}
